@@ -1,3 +1,6 @@
+#define EEPROM_START_ADDRESS 100
+#define TAG_LENGTH 12
+
 #define RFID Serial3
 #define BLUETOOTH Serial1
 

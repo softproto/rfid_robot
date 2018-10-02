@@ -21,8 +21,8 @@ String getTagString(){
     while(RFID.available()){
         c=RFID.read(); 
         tempTagString = tempTagString + c;
-      if (tempTagString.length() == 14 ){ 
-        if ((tempTagString[0]==2) && (tempTagString[13]==3)) {
+      if (tempTagString.length() == 16 ){ 
+        if ((tempTagString[0]==2) && (tempTagString[15]==3)) {
           tempTagString = tempTagString.substring(1,13); 
           if (tagCheckSum(tempTagString) == true ){ 
               tagString = tempTagString;
@@ -32,6 +32,13 @@ String getTagString(){
         tempTagString="";
       }
     }//while()
+  
+  //reset the reader  
+  digitalWrite(RFID_RESET_PIN, LOW);
+  delay(150); 
+  digitalWrite(RFID_RESET_PIN, HIGH);
+  delay(150);
+  //
 
 if (tagString != lastTagString){
   // if (tagString != ""){ 
@@ -43,3 +50,24 @@ if (tagString != lastTagString){
     return ("");
    }
 }//getTagString()
+
+
+//////
+void saveTagToEeprom(String tag, int startAddress){
+for (int i = 0; i < 12; i++){
+    EEPROM.write(startAddress + i, tag[i]);
+    } 
+}//saveTagToEeprom()
+
+
+
+//////
+String readTagFromEeprom(int startAddress){
+String tagString = "";
+char c;
+  for (int i = 0; i < 12; i++){
+      c = EEPROM.read(startAddress + i);  
+      tagString = tagString + c;
+      } 
+return (tagString);      
+}//readTagFromEeprom()

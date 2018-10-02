@@ -1,6 +1,9 @@
 #include <TimerOne.h>
+#include <EEPROM.h>
+#include <PCD8544.h>
 #include "setup.h"
-#include "PCD8544.h"
+
+
 
 //
 unsigned long sequenceStep = 1000;
@@ -72,12 +75,13 @@ void setup() {
   Timer1.attachInterrupt(timerIsr);
  
 
-for (int i=0; i<TAG_SEQUENCE; i++){
- tagSequence[i] = 0; 
-}
-tags[0] = "";
+for (int i = 0; i < TAG_SEQUENCE; i++){
+    tagSequence[i] = 0; 
+    }
 
-    
+for (int i = 0; i < (TAG_AMOUNT * TAG_LENGTH); i = i + TAG_LENGTH){
+    tags[i/TAG_LENGTH] = readTagFromEeprom(EEPROM_START_ADDRESS + i);
+    }
 
 }//setup()
 

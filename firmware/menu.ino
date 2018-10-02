@@ -118,6 +118,11 @@ void adjustTags(){
    }
    
 lcd.clear();
+
+for (int i = 0; i < (TAG_AMOUNT * TAG_LENGTH); i = i + TAG_LENGTH){
+    saveTagToEeprom(tags[i/TAG_LENGTH], EEPROM_START_ADDRESS + i);  
+    }
+
 delay(MENU_PAUSE);
 }//adjustTags()
 
@@ -229,7 +234,7 @@ void setSequence(){
                   lcd.setCursor(LCD_SEQUENCE_TAG); 
                   lcd.print(tagStringMemo[i]);
                   lcd.display();
-                  delay(SETUP_PAUSE);
+                  delay(MENU_PAUSE);
                      index++;
                   }
               }  
