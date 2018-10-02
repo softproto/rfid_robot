@@ -1,3 +1,11 @@
+//
+void resetReader(){
+  digitalWrite(RFID_RESET_PIN, LOW);
+  delay(150);
+  digitalWrite(RFID_RESET_PIN, HIGH);
+  delay(150);
+}//resetReader()
+
 
 boolean tagCheckSum(String tagString) {
   boolean res = false;
@@ -25,10 +33,10 @@ String getTagString(){
         if ((tempTagString[0]==2) && (tempTagString[15]==3)) {
           tempTagString = tempTagString.substring(1,13); 
           if (tagCheckSum(tempTagString) == true ){ 
-              tagString = tempTagString;
+             tagString = tempTagString;
           
           }
-        }
+       }
         tempTagString="";
       }
     }//while()

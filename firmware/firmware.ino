@@ -1,9 +1,21 @@
 #include <TimerOne.h>
 #include <EEPROM.h>
-#include <PCD8544.h>
+#include <UTFT.h>
 #include "setup.h"
 
+extern uint8_t SmallFont[];
 
+UTFT tft(ITDB18SP,51,52,48,47,49);  
+
+byte keypadRowPins[KEYPAD_ROWS] = {30};
+byte keypadColPins[KEYPAD_COLS] = {22, 24, 26, 28};
+boolean keypadState[KEYPAD_COLS][KEYPAD_ROWS] = {false, false, false, false};
+
+int colorRed[] = {255, 0, 0};
+int colorGreen[] = {0, 255, 0};
+int colorBlue[] = {0, 0, 255};
+int colorWhite[] = {255, 255, 255};
+int colorOff[] = {0, 0, 0};
 
 //
 unsigned long sequenceStep = 1000;
@@ -13,8 +25,6 @@ int currentSpeed = 150;
 String lastTagString = "";
 //
 volatile byte buttonPressed = BUTTON_NONE;
-//
-PCD8544 lcd = PCD8544(6, 5, 4, 3, 2);
 //
 String tags[TAG_AMOUNT];
 //
@@ -42,7 +52,7 @@ boolean isRearLimitSwitchActive = false;
 
 //////
 void setup() {
- // Serial.begin(9600);
+  Serial.begin(9600);
   RFID.begin(9600);  
   BLUETOOTH.begin(9600);
 
@@ -68,9 +78,9 @@ void setup() {
   digitalWrite(LEFT_MOTOR_PIN_ENABLE, LOW);  
   digitalWrite(RIGHT_MOTOR_PIN_ENABLE, LOW); 
     
-  lcd.init();
-  lcd.setContrast(50);
-  lcd.clear();
+  tft.InitLCD();
+  tft.setFont(SmallFont);
+  tft.clrScr();
   
   Timer1.initialize(100000);
   Timer1.attachInterrupt(timerIsr);
@@ -83,24 +93,22 @@ for (int i = 0; i < TAG_SEQUENCE; i++){
 for (int i = 0; i < (TAG_AMOUNT * TAG_LENGTH); i = i + TAG_LENGTH){
     tags[i/TAG_LENGTH] = readTagFromEeprom(EEPROM_START_ADDRESS + i);
     }
-
+displayReset();
 }//setup()
 
 
 //////
 void loop() {
-   lcd.clear();
-   lcd.setCursor(LCD_MAIN_MENU_MEMO); 
-   lcd.print("hit button");
-   lcd.setCursor(LCD_MAIN_MENU_TAG); 
-   lcd.print("TAG adjastment");
-   lcd.setCursor(LCD_MAIN_MENU_SET); 
-   lcd.print("SET sequence");
-   lcd.setCursor(LCD_MAIN_MENU_PLAY); 
-   lcd.print("PLAY sequence");   
-   lcd.setCursor(LCD_MAIN_MENU_BLUETOOTH); 
-   lcd.print("BLUETOOTH mode"); 
+   //tft.clrScr();
+   
+   tft.print("HIT THE BUTTON", LCD_MAIN_MENU_MEMO); 
+   tft.print("TAG adjastment", LCD_MAIN_MENU_TAG); 
+   tft.print("SET sequence", LCD_MAIN_MENU_SET); 
+   tft.print("PLAY sequence", LCD_MAIN_MENU_PLAY); 
+   tft.print("BLUETOOTH mode", LCD_MAIN_MENU_BLUETOOTH); 
    //
+
+   
   switch (buttonPressed) {
     case BUTTON_TAG: {
         adjustTags();
@@ -120,6 +128,5 @@ void loop() {
       }
   }
  // 
-  lcd.display();
   delay(BUTTON_PAUSE);
 }//loop()
