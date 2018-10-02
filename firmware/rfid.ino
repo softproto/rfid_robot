@@ -1,3 +1,11 @@
+//
+void resetReader(){
+  digitalWrite(RFID_RESET_PIN, LOW);
+  delay(150);
+  digitalWrite(RFID_RESET_PIN, HIGH);
+  delay(150);
+}//resetReader()
+
 
 boolean tagCheckSum(String tagString) {
   boolean res = false;
@@ -33,7 +41,6 @@ String getTagString(){
     }//while()
     return (tagString);
 }//getTagString()
-
 
 
 //////
