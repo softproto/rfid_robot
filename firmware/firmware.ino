@@ -5,7 +5,37 @@
 
 extern uint8_t SmallFont[];
 
-UTFT tft(ITDB18SP,51,52,48,47,49);  
+//Vdd33 (LED) - 3.3v
+//SDA - 11 (51)
+//SCL (SCK) - 13 (52)
+//CS - 10 (48)
+//RST - 8
+//RS (A0, DC) - 9 (49)
+//GND - GND
+//Vcc - 5v
+
+/*
+RST 53
+RS 39
+SDA 51
+SCL 52
+CS 38
+*/
+/*
+#define DISPLAY_RST_PIN 47
+#define DISPLAY_CS_PIN 48
+#define DISPLAY_RS_PIN 49
+#define DISPLAY_SDA_PIN 51
+#define DISPLAY_SCL_PIN 52
+*/
+
+#define DISPLAY_RST_PIN 53
+#define DISPLAY_CS_PIN 48
+#define DISPLAY_RS_PIN 49
+#define DISPLAY_SDA_PIN 51
+#define DISPLAY_SCL_PIN 52
+
+UTFT tft(ITDB18SP, DISPLAY_SDA_PIN, DISPLAY_SCL_PIN, DISPLAY_CS_PIN, DISPLAY_RST_PIN, DISPLAY_RS_PIN);  
 
 byte keypadRowPins[KEYPAD_ROWS] = {30};
 byte keypadColPins[KEYPAD_COLS] = {22, 24, 26, 28};
