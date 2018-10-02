@@ -1,11 +1,3 @@
-//
-void resetReader(){
-  digitalWrite(RFID_RESET_PIN, LOW);
-  delay(150);
-  digitalWrite(RFID_RESET_PIN, HIGH);
-  delay(150);
-}//resetReader()
-
 
 boolean tagCheckSum(String tagString) {
   boolean res = false;
@@ -29,35 +21,19 @@ String getTagString(){
     while(RFID.available()){
         c=RFID.read(); 
         tempTagString = tempTagString + c;
-      if (tempTagString.length() == 16 ){ 
-        if ((tempTagString[0]==2) && (tempTagString[15]==3)) {
+      if (tempTagString.length() == 14 ){ 
+        if ((tempTagString[0]==2) && (tempTagString[13]==3)) {
           tempTagString = tempTagString.substring(1,13); 
           if (tagCheckSum(tempTagString) == true ){ 
-             tagString = tempTagString;
-          
-          }
-       }
+              tagString = tempTagString;
+           }
+        }
         tempTagString="";
       }
     }//while()
-  
-  //reset the reader  
-  digitalWrite(RFID_RESET_PIN, LOW);
-  delay(150); 
-  digitalWrite(RFID_RESET_PIN, HIGH);
-  delay(150);
-  //
-
-if (tagString != lastTagString){
-  // if (tagString != ""){ 
-     lastTagString = tagString;
-   //   }
     return (tagString);
-    
-    }else{
-    return ("");
-   }
 }//getTagString()
+
 
 
 //////
