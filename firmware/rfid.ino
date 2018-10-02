@@ -17,10 +17,9 @@ boolean tagCheckSum(String tagString) {
 String getTagString(){
   String tagString = "", tempTagString = "";
   char c;
-   
-  if (rfid.isListening()) {
-    while(rfid.available()){
-        c=rfid.read(); 
+   delay(MENU_PAUSE);
+    while(RFID.available()){
+        c=RFID.read(); 
         tempTagString = tempTagString + c;
       if (tempTagString.length() == 14 ){ 
         if ((tempTagString[0]==2) && (tempTagString[13]==3)) {
@@ -33,7 +32,6 @@ String getTagString(){
         tempTagString="";
       }
     }//while()
-  }
 
 if (tagString != lastTagString){
   // if (tagString != ""){ 
