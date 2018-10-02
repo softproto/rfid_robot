@@ -6,7 +6,7 @@ void bluetoothMode(){
   lcd.display();
   int val = 0;
   
-while(buttonPressed != BUTTON_BLUETOOTH){
+while(buttonPressed != BUTTON_BLUETOOTH && buttonPressed != BUTTON_MENU){
     val = BLUETOOTH.read();
     if ( val == 0){
     motorRunBackward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, MOTOR_STOP, LEFT_MOTOR_PIN_ENABLE);
@@ -100,8 +100,10 @@ void adjustTags(){
   lcd.clear();
   delay(MENU_PAUSE);
   String tagString = TAG_NONE;
-  int index;
-   for (index = 0; index < TAG_AMOUNT; index++){
+  
+  int index = 0;
+  while(index < TAG_AMOUNT && buttonPressed != BUTTON_MENU){ 
+ //  for (index = 0; index < TAG_AMOUNT; index++){
    lcd.clear();
    lcd.setCursor(LCD_TAG_MENU); 
    lcd.print(tagStringMemo[index]); 
@@ -115,8 +117,9 @@ void adjustTags(){
         tagString = TAG_NONE;
    lcd.display();
    delay(SETUP_PAUSE);
-   }
-   
+ index++;  
+// }
+ } 
 lcd.clear();
 
 for (int i = 0; i < (TAG_AMOUNT * TAG_LENGTH); i = i + TAG_LENGTH){
@@ -138,17 +141,19 @@ void playSequence(){
   lcd.display();
   lcd.setCursor(LCD_PLAY_SEQUENCE);
   
-  for (int i=0; i < sequenceLength; i++){
+  int index = 0;
+  while(index < sequenceLength && buttonPressed != BUTTON_MENU){ 
+ // for (int i=0; i < sequenceLength; i++){
    //      lcd.print(tagCharMemo[tagSequence[i]]);  
    //      lcd.print(" ");
          lcd.setCursor(LCD_PLAY_SEQUENCE);
          lcd.print("              ");
          lcd.setCursor(LCD_PLAY_SEQUENCE);
-         lcd.print(tagStringMemo[tagSequence[i]]);
+         lcd.print(tagStringMemo[tagSequence[index]]);
          lcd.display();
    
    
-   val = tagSequence[i];
+   val = tagSequence[index];
     
     if ( val == 0){
         motorRunBackward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, MOTOR_STOP, LEFT_MOTOR_PIN_ENABLE);
@@ -168,15 +173,15 @@ void playSequence(){
         }
     if ( val == 4){
         motorRunForward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, currentSpeed, LEFT_MOTOR_PIN_ENABLE);
-        motorRunBackward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, currentSpeed, RIGHT_MOTOR_PIN_ENABLE);;
+        motorRunBackward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, currentSpeed, RIGHT_MOTOR_PIN_ENABLE);
         }
     if ( val == 6){
         motorRunForward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, MOTOR_STOP, LEFT_MOTOR_PIN_ENABLE);
-        motorRunForward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, currentSpeed, RIGHT_MOTOR_PIN_ENABLE);;
+        motorRunForward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, currentSpeed, RIGHT_MOTOR_PIN_ENABLE);
         }
     if ( val == 7){
         motorRunForward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, currentSpeed, LEFT_MOTOR_PIN_ENABLE);
-        motorRunForward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, MOTOR_STOP, RIGHT_MOTOR_PIN_ENABLE);;
+        motorRunForward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, MOTOR_STOP, RIGHT_MOTOR_PIN_ENABLE);
         }
     if ( val == 8){
         motorRunBackward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, MOTOR_STOP, LEFT_MOTOR_PIN_ENABLE);
@@ -188,13 +193,15 @@ void playSequence(){
         }      
           
          
-         
-         
          delay(sequenceStep);
-         } 
- 
-   while(buttonPressed != BUTTON_PLAY){
-   }  
+  index++;  
+ // } 
+}
+//   while(buttonPressed != BUTTON_PLAY){
+//  }  
+   
+   motorRunForward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, MOTOR_STOP, LEFT_MOTOR_PIN_ENABLE);
+   motorRunForward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, MOTOR_STOP, RIGHT_MOTOR_PIN_ENABLE);
            
   lcd.clear();
   delay(MENU_PAUSE);          
@@ -209,9 +216,12 @@ void setSequence(){
       for (int i=0; i < TAG_SEQUENCE; i++){
           tagSequence[i] = 0; 
           }
+  
+  motorRunForward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, MOTOR_MIN_SPEED, LEFT_MOTOR_PIN_ENABLE);
+  motorRunForward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, MOTOR_MIN_SPEED, RIGHT_MOTOR_PIN_ENABLE);
     
   int index = 0;
-  while(index < TAG_SEQUENCE && buttonPressed != BUTTON_SET){
+  while(index < TAG_SEQUENCE && buttonPressed != BUTTON_SET && buttonPressed != BUTTON_MENU){
     lcd.clear();
     lcd.setCursor(LCD_SEQUENCE_MENU); 
     lcd.print("USE TAG ");
@@ -240,6 +250,10 @@ void setSequence(){
               }  
   tagString = TAG_NONE;
   }  
+  
+ motorRunForward(LEFT_MOTOR_PIN_A, LEFT_MOTOR_PIN_B, MOTOR_STOP, LEFT_MOTOR_PIN_ENABLE);
+ motorRunForward(RIGHT_MOTOR_PIN_A, RIGHT_MOTOR_PIN_B, MOTOR_STOP, RIGHT_MOTOR_PIN_ENABLE); 
+  
  sequenceLength = index;
 }//setSequence()
 
@@ -281,7 +295,10 @@ void timerIsr() {
        buttonPressed = BUTTON_BLUETOOTH;
        return;
        }
-  
+   if (digitalRead(BUTTON_MENU_PIN) == LOW){
+       buttonPressed = BUTTON_MENU;
+       return;
+       }  
    buttonPressed = BUTTON_NONE;
     
 }//timeIsr()
